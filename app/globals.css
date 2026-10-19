@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { color-scheme: light; }
+* { box-sizing: border-box; }
+html { min-height: 100%; background: #f7f6f3; }
+body { margin: 0; color: #20201e; background: #f7f6f3; font-family: Arial, Helvetica, sans-serif; }
+button, textarea, select { font: inherit; }
+button:focus-visible, textarea:focus-visible, select:focus-visible, a:focus-visible {
+  outline: 3px solid #a58a67; outline-offset: 3px;
+}
+::selection { background: #e9dfd0; color: #24211d; }
