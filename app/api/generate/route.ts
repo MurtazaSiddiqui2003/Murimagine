@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
         ...dimensions[aspectRatio],
         num_inference_steps: 4,
       },
-    });
+    }, { outputType: "blob" });
 
     if (!(imageBlob instanceof Blob) || imageBlob.size === 0) {
       throw new Error("The provider returned an empty image.");
