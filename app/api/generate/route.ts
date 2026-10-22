@@ -103,10 +103,14 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown provider error";
     const lower = message.toLowerCase();
-    const status = lower.includes("rate") || lower.includes("quota") || lower.includes("429") ? 429 : 502;
-    const safeMessage = status === 429
-      ? "The free inference quota may be busy or exhausted. No paid fallback is configured. Try again later or check your provider quota."
-      : "The image provider couldn't complete this request. The selected model may be unavailable on free inference, or the service may be busy. Check the server logs and provider access.";
+    const outOfCredits = lower.includes("no remaining credits") || lower.includes("purchase pre-paid credits") || lower.includes("insufficient credits");
+    const rateLimited = lower.includes("rate") || lower.includes("quota") || lower.includes("429");
+    const status = outOfCredits ? 402 : rateLimited ? 429 : 502;
+    const safeMessage = outOfCredits
+      ? "Hugging Face image-generation credits are exhausted. No image was generated and no paid fallback was used. Connect a provider with a free allowance or add credits to your Hugging Face account."
+      : rateLimited
+        ? "The image provider rate limit or free quota has been reached. No paid fallback is configured. Please wait and try again later."
+        : "The image provider couldn't complete this request. Check provider availability, token permissions, and server logs.";
     console.error("Image generation provider error:", message);
     return NextResponse.json({ error: safeMessage }, { status });
   }
